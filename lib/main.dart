@@ -406,14 +406,17 @@ class _LoginPageState extends State<LoginPage> {
       child: RaisedButton(
         elevation: 5,
         onPressed: () {
-          if (usernameController.text == "123" &&
+          if (usernameController.text == "1" &&
               passwordController.text == "123") {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                  builder: (context) => MyHomePage(
-                    title: "BarCode Scanner",
-                  )),
+              MaterialPageRoute(builder: (context) => ShowUserChecked()),
+            );
+          } else if (usernameController.text == "2" &&
+              passwordController.text == "123") {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => MyHomePage(title: "Barcode Scanner",)),
             );
           }
         },
@@ -492,6 +495,328 @@ class _LoginPageState extends State<LoginPage> {
                   buildPasswordTf(),
                   buildLoginButton(),
                 ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class ShowUserChecked extends StatefulWidget {
+  @override
+  _ShowUserCheckedState createState() => _ShowUserCheckedState();
+}
+
+class _ShowUserCheckedState extends State<ShowUserChecked> {
+  String selectedValue = "Choose a distributor";
+  String selectedId = "0";
+  List<List> users = [
+    ["0", "distributor1", "time2", "date3", "location4"],
+    ["1", "Ahmad Ali", "10:00", "9/9/2020", "Amman"],
+    ["2", "Mohmmad Ali", "11:00", "10/9/2020", "Karak"],
+    ["3", "Faris Hassan", "12:00", "11/9/2020", "Aqaba"],
+    ["1", "Ahmad Ali", "14:00", "13/8/2020", "Zarqa"],
+    ["2", "Mohmmad Ali", "11:00", "20/8/2020", "Madaba"],
+    ["3", "Faris Hassan", "12:00", "23/7/2020", "Ma'an"],
+  ];
+
+  Widget buildListView() {
+    return ListView.builder(
+        physics: NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        padding: EdgeInsets.only(left: 11, right: 11),
+        itemCount: users.length,
+        itemBuilder: (context, position) {
+          if (users[position][0] != "0") {
+            if (users[position][0] == selectedId) {
+              return Padding(
+                padding: const EdgeInsets.all(6.0),
+                child: Card(
+                  elevation: 16,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              "Name: ",
+                              style: TextStyle(
+                                  fontSize: 17,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              users[position][1],
+                              style: TextStyle(
+                                  fontSize: 17,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              "Location: ",
+                              style: TextStyle(
+                                  fontSize: 17,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              users[position][4],
+                              style: TextStyle(
+                                  fontSize: 17,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              "Date: ",
+                              style: TextStyle(
+                                  fontSize: 17,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              users[position][3],
+                              style: TextStyle(
+                                  fontSize: 17,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              "Time: ",
+                              style: TextStyle(
+                                  fontSize: 17,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              users[position][2],
+                              style: TextStyle(
+                                  fontSize: 17,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            } else {
+              return Container();
+            }
+          } else {
+            return Padding(
+              padding: const EdgeInsets.all(6.0),
+              child: Card(
+                elevation: 16,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            "Name: ",
+                            style: TextStyle(
+                                fontSize: 17,
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            users[position][1],
+                            style: TextStyle(
+                                fontSize: 17,
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Row(
+                        children: [
+                          Text(
+                            "Location: ",
+                            style: TextStyle(
+                                fontSize: 17,
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            users[position][4],
+                            style: TextStyle(
+                                fontSize: 17,
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Row(
+                        children: [
+                          Text(
+                            "Date: ",
+                            style: TextStyle(
+                                fontSize: 17,
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            users[position][3],
+                            style: TextStyle(
+                                fontSize: 17,
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Text(
+                            "Time: ",
+                            style: TextStyle(
+                                fontSize: 17,
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            users[position][2],
+                            style: TextStyle(
+                                fontSize: 17,
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          }
+        });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Stack(
+        children: [
+          Container(
+            height: double.infinity,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Color(0xFF73AEF5),
+                  Color(0xFF61A4F1),
+                  Color(0xFF478DE0),
+                  Color(0xFF398AE5),
+                ],
+                stops: [
+                  0.1,
+                  0.4,
+                  0.7,
+                  0.9,
+                ],
+              ),
+            ),
+          ),
+          Align(
+            alignment: Alignment.topCenter,
+            child: Container(
+              padding: EdgeInsets.only(bottom: 500),
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    DropdownButton(
+                      underline: Container(
+                        height: 3,
+                        color: Colors.white,
+                      ),
+                      dropdownColor: Color(0xFF73AEF5),
+                      value: selectedValue,
+                      icon: Icon(
+                        Icons.arrow_drop_down_circle,
+                        color: Colors.white,
+                      ),
+                      items: <String>[
+                        "Choose a distributor",
+                        'Ahmad Ali',
+                        'Mohammad Ali',
+                        'Faris Hassan'
+                      ].map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Container(
+                            padding: EdgeInsets.all(10),
+                            child: Text(
+                              value,
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          selectedValue = value;
+                          if (selectedValue == "Ahmad Ali")
+                            selectedId = "1";
+                          else if (selectedValue == "Mohammad Ali")
+                            selectedId = "2";
+                          else if (selectedValue == "Faris Hassan")
+                            selectedId = "3";
+                          else
+                            selectedId = "0";
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Align(
+            alignment: Alignment.center,
+            child: Container(
+              padding: EdgeInsets.only(top: 210, bottom: 90),
+              child: SingleChildScrollView(
+                physics: AlwaysScrollableScrollPhysics(),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [buildListView()],
+                ),
               ),
             ),
           ),
