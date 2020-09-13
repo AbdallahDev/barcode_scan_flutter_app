@@ -518,13 +518,13 @@ class _ShowUserCheckedState extends State<ShowUserChecked> {
   String selectedValue = "Choose a distributor";
   String selectedId = "0";
   List<List> users = [
-    ["0", "distributor1", "time2", "date3", "location4"],
-    ["1", "Ahmad Ali", "10:00", "9/9/2020", "Amman"],
-    ["2", "Mohammad Ali", "11:00", "10/9/2020", "Karak"],
-    ["3", "Faris Hassan", "12:00", "11/9/2020", "Aqaba"],
-    ["1", "Ahmad Ali", "14:00", "13/8/2020", "Zarqa"],
-    ["2", "Mohammad Ali", "11:00", "20/8/2020", "Madaba"],
-    ["3", "Faris Hassan", "12:00", "23/7/2020", "Ma'an"],
+    ["0", "distributor1"],
+    ["1", "Ahmad Ali"],
+    ["2", "Mohammad Ali"],
+    ["3", "Faris Hassan"],
+    ["1", "Ahmad Ali"],
+    ["2", "Mohammad Ali"],
+    ["3", "Faris Hassan"],
   ];
   List<Checked> _checked = [
     Checked(
@@ -535,10 +535,10 @@ class _ShowUserCheckedState extends State<ShowUserChecked> {
 
   _fillCheckedList({@required userId}) async {
     userId = int.parse(userId);
-    var ipLocal = "192.168.0.29";
-    // var ipServer = "193.188.88.148";
+    // var ipLocal = "192.168.0.29";
+    var ipServer = "193.188.88.148";
     var url =
-        "http://$ipLocal/apps/myapps/barcodescan/apis/show_checked.php?userId=$userId";
+        "http://$ipServer/apps/myapps/barcodescan/apis/show_checked.php?userId=$userId";
     var response = await http.get(url);
 
     if (response.statusCode == 200) {
@@ -547,6 +547,7 @@ class _ShowUserCheckedState extends State<ShowUserChecked> {
       list.forEach((map) {
         _checked.add(Checked.fromMap(map));
       });
+      setState(() {});
     }
   }
 
@@ -555,10 +556,10 @@ class _ShowUserCheckedState extends State<ShowUserChecked> {
         physics: NeverScrollableScrollPhysics(),
         shrinkWrap: true,
         padding: EdgeInsets.only(left: 11, right: 11),
-        itemCount: users.length,
+        itemCount: _checked.length,
         itemBuilder: (context, position) {
-          if (selectedId == "0") {
-            if (users[position][0] != "0") {
+          if (selectedId != "0") {
+            if (position != 0) {
               return Padding(
                 padding: const EdgeInsets.all(6.0),
                 child: Card(
@@ -579,7 +580,7 @@ class _ShowUserCheckedState extends State<ShowUserChecked> {
                                   fontWeight: FontWeight.bold),
                             ),
                             Text(
-                              users[position][1],
+                              _checked[position].userName,
                               style: TextStyle(
                                   fontSize: 17,
                                   color: Colors.black,
@@ -600,7 +601,7 @@ class _ShowUserCheckedState extends State<ShowUserChecked> {
                                   fontWeight: FontWeight.bold),
                             ),
                             Text(
-                              users[position][4],
+                              _checked[position].locationName,
                               style: TextStyle(
                                   fontSize: 17,
                                   color: Colors.black,
@@ -621,25 +622,7 @@ class _ShowUserCheckedState extends State<ShowUserChecked> {
                                   fontWeight: FontWeight.bold),
                             ),
                             Text(
-                              users[position][3],
-                              style: TextStyle(
-                                  fontSize: 17,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Text(
-                              "Time: ",
-                              style: TextStyle(
-                                  fontSize: 17,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            Text(
-                              users[position][2],
+                              _checked[position].dateTime,
                               style: TextStyle(
                                   fontSize: 17,
                                   color: Colors.black,
@@ -656,103 +639,7 @@ class _ShowUserCheckedState extends State<ShowUserChecked> {
               return Container();
             }
           } else {
-            if (users[position][0] == selectedId) {
-              return Padding(
-                padding: const EdgeInsets.all(6.0),
-                child: Card(
-                  elevation: 16,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              "Name: ",
-                              style: TextStyle(
-                                  fontSize: 17,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            Text(
-                              users[position][1],
-                              style: TextStyle(
-                                  fontSize: 17,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Row(
-                          children: [
-                            Text(
-                              "Location: ",
-                              style: TextStyle(
-                                  fontSize: 17,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            Text(
-                              users[position][4],
-                              style: TextStyle(
-                                  fontSize: 17,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Row(
-                          children: [
-                            Text(
-                              "Date: ",
-                              style: TextStyle(
-                                  fontSize: 17,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            Text(
-                              users[position][3],
-                              style: TextStyle(
-                                  fontSize: 17,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Text(
-                              "Time: ",
-                              style: TextStyle(
-                                  fontSize: 17,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            Text(
-                              users[position][2],
-                              style: TextStyle(
-                                  fontSize: 17,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              );
-            } else {
-              return Container();
-            }
+            return Container();
           }
         });
   }
