@@ -1,3 +1,4 @@
+import 'package:barcode_scan_flutter_app/model/checked.dart';
 import 'package:barcode_scan_flutter_app/static/staticVars.dart';
 import 'package:flutter/material.dart';
 import 'package:barcode_scan/barcode_scan.dart';
@@ -523,6 +524,21 @@ class _ShowUserCheckedState extends State<ShowUserChecked> {
     ["2", "Mohammad Ali", "11:00", "20/8/2020", "Madaba"],
     ["3", "Faris Hassan", "12:00", "23/7/2020", "Ma'an"],
   ];
+  List<Checked> _checked = [
+    Checked(
+        userName: "username",
+        locationName: "locationName",
+        dateTime: "dateTime")
+  ];
+
+  _fillCheckedList({@required userId}) async {
+    userId = int.parse(userId);
+    var ipLocal = "192.168.0.29";
+    // var ipServer = "193.188.88.148";
+    var url =
+        "http://$ipLocal/apps/myapps/barcodescan/apis/show_checked.php?userId=$userId";
+    var response = await http.get(url);
+  }
 
   Widget buildListView() {
     return ListView.builder(
@@ -806,6 +822,8 @@ class _ShowUserCheckedState extends State<ShowUserChecked> {
                           else
                             selectedId = "0";
                         });
+
+                        _fillCheckedList(userId: selectedId);
                       },
                     ),
                   ],
