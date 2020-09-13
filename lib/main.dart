@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Barcode Scanner',
-      home: LoginPage(),
+      home: ShowUserChecked(),
     );
   }
 }
@@ -416,7 +416,10 @@ class _LoginPageState extends State<LoginPage> {
               passwordController.text == "123") {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => MyHomePage(title: "Barcode Scanner",)),
+              MaterialPageRoute(
+                  builder: (context) => MyHomePage(
+                        title: "Barcode Scanner",
+                      )),
             );
           }
         },
@@ -529,8 +532,8 @@ class _ShowUserCheckedState extends State<ShowUserChecked> {
         padding: EdgeInsets.only(left: 11, right: 11),
         itemCount: users.length,
         itemBuilder: (context, position) {
-          if (users[position][0] != "0") {
-            if (users[position][0] == selectedId) {
+          if (selectedId == "0") {
+            if (users[position][0] != "0") {
               return Padding(
                 padding: const EdgeInsets.all(6.0),
                 child: Card(
@@ -628,99 +631,103 @@ class _ShowUserCheckedState extends State<ShowUserChecked> {
               return Container();
             }
           } else {
-            return Padding(
-              padding: const EdgeInsets.all(6.0),
-              child: Card(
-                elevation: 16,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            "Name: ",
-                            style: TextStyle(
-                                fontSize: 17,
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          Text(
-                            users[position][1],
-                            style: TextStyle(
-                                fontSize: 17,
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Row(
-                        children: [
-                          Text(
-                            "Location: ",
-                            style: TextStyle(
-                                fontSize: 17,
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          Text(
-                            users[position][4],
-                            style: TextStyle(
-                                fontSize: 17,
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Row(
-                        children: [
-                          Text(
-                            "Date: ",
-                            style: TextStyle(
-                                fontSize: 17,
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          Text(
-                            users[position][3],
-                            style: TextStyle(
-                                fontSize: 17,
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Text(
-                            "Time: ",
-                            style: TextStyle(
-                                fontSize: 17,
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          Text(
-                            users[position][2],
-                            style: TextStyle(
-                                fontSize: 17,
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                    ],
+            if (users[position][0] == selectedId) {
+              return Padding(
+                padding: const EdgeInsets.all(6.0),
+                child: Card(
+                  elevation: 16,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              "Name: ",
+                              style: TextStyle(
+                                  fontSize: 17,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              users[position][1],
+                              style: TextStyle(
+                                  fontSize: 17,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              "Location: ",
+                              style: TextStyle(
+                                  fontSize: 17,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              users[position][4],
+                              style: TextStyle(
+                                  fontSize: 17,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              "Date: ",
+                              style: TextStyle(
+                                  fontSize: 17,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              users[position][3],
+                              style: TextStyle(
+                                  fontSize: 17,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              "Time: ",
+                              style: TextStyle(
+                                  fontSize: 17,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              users[position][2],
+                              style: TextStyle(
+                                  fontSize: 17,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            );
+              );
+            } else {
+              return Container();
+            }
           }
         });
   }
