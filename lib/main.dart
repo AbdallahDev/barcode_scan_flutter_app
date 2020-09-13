@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:barcode_scan_flutter_app/model/checked.dart';
 import 'package:barcode_scan_flutter_app/static/staticVars.dart';
 import 'package:flutter/material.dart';
@@ -538,6 +540,14 @@ class _ShowUserCheckedState extends State<ShowUserChecked> {
     var url =
         "http://$ipLocal/apps/myapps/barcodescan/apis/show_checked.php?userId=$userId";
     var response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      List list = json.decode(response.body);
+      _checked = [Checked(userName: "", locationName: "", dateTime: "")];
+      list.forEach((map) {
+        _checked.add(Checked.fromMap(map));
+      });
+    }
   }
 
   Widget buildListView() {
