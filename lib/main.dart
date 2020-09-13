@@ -518,10 +518,10 @@ class _ShowUserCheckedState extends State<ShowUserChecked> {
   List<List> users = [
     ["0", "distributor1", "time2", "date3", "location4"],
     ["1", "Ahmad Ali", "10:00", "9/9/2020", "Amman"],
-    ["2", "Mohmmad Ali", "11:00", "10/9/2020", "Karak"],
+    ["2", "Mohammad Ali", "11:00", "10/9/2020", "Karak"],
     ["3", "Faris Hassan", "12:00", "11/9/2020", "Aqaba"],
     ["1", "Ahmad Ali", "14:00", "13/8/2020", "Zarqa"],
-    ["2", "Mohmmad Ali", "11:00", "20/8/2020", "Madaba"],
+    ["2", "Mohammad Ali", "11:00", "20/8/2020", "Madaba"],
     ["3", "Faris Hassan", "12:00", "23/7/2020", "Ma'an"],
   ];
 
