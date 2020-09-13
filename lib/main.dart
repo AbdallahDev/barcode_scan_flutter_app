@@ -1,3 +1,4 @@
+import 'package:barcode_scan_flutter_app/static/staticVars.dart';
 import 'package:flutter/material.dart';
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/rendering.dart';
@@ -112,6 +113,63 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
     );
+  }
+
+  void _callSaveBarCodesFunction() {
+    for (var i = 0; i < barCodes.length; i++) {
+      _saveToken(barCodes[i], productName);
+    }
+  }
+
+  Future _scanQR() async {
+    try {
+      var qrResult = await BarcodeScanner.scan();
+      setState(() {
+        result = qrResult.rawContent;
+        productName = selectedValue;
+        barCodes.add(qrResult.rawContent);
+      });
+    } on PlatformException catch (ex) {
+      if (ex.code == BarcodeScanner.cameraAccessDenied) {
+        setState(() {
+          result = "Camera Permission was denied";
+        });
+      } else {
+        setState(() {
+          result = "Unknown Error $ex";
+        });
+      }
+    } on FormatException {
+      setState(() {
+        result = "You pressed the back button before scanning anything!";
+      });
+    } catch (ex) {
+      setState(() {
+        result = "Unknown Error $ex";
+      });
+    }
+  }
+
+  void _saveToken(String barCode, String productName) async {
+    // var ipLocal = "192.168.0.29";
+    var ipServer = "193.188.88.148";
+    var url =
+        "http://$ipServer/apps/test/BarcodeScan/apis/events_insert.php?barcode=$barCode&productName=$productName";
+    var response = await http.get(url);
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      setState(() {
+        result = "good";
+      });
+    } else {
+      // If the server did not return a 200 OK response,
+      setState(() {
+        result = "error";
+      });
+      // then throw an exception.
+      throw Exception('Failed to load album');
+    }
   }
 
   @override
@@ -234,63 +292,6 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
-
-  void _callSaveBarCodesFunction() {
-    for (var i = 0; i < barCodes.length; i++) {
-      _saveToken(barCodes[i], productName);
-    }
-  }
-
-  Future _scanQR() async {
-    try {
-      var qrResult = await BarcodeScanner.scan();
-      setState(() {
-        result = qrResult.rawContent;
-        productName = selectedValue;
-        barCodes.add(qrResult.rawContent);
-      });
-    } on PlatformException catch (ex) {
-      if (ex.code == BarcodeScanner.cameraAccessDenied) {
-        setState(() {
-          result = "Camera Permission was denied";
-        });
-      } else {
-        setState(() {
-          result = "Unknown Error $ex";
-        });
-      }
-    } on FormatException {
-      setState(() {
-        result = "You pressed the back button before scanning anything!";
-      });
-    } catch (ex) {
-      setState(() {
-        result = "Unknown Error $ex";
-      });
-    }
-  }
-
-  void _saveToken(String barCode, String productName) async {
-    // var ipLocal = "192.168.0.29";
-    var ipServer = "193.188.88.148";
-    var url =
-        "http://$ipServer/apps/test/BarcodeScan/apis/events_insert.php?barcode=$barCode&productName=$productName";
-    var response = await http.get(url);
-    if (response.statusCode == 200) {
-      // If the server did return a 200 OK response,
-      // then parse the JSON.
-      setState(() {
-        result = "good";
-      });
-    } else {
-      // If the server did not return a 200 OK response,
-      setState(() {
-        result = "error";
-      });
-      // then throw an exception.
-      throw Exception('Failed to load album');
-    }
-  }
 }
 
 class LoginPage extends StatefulWidget {
@@ -406,6 +407,7 @@ class _LoginPageState extends State<LoginPage> {
       child: RaisedButton(
         elevation: 5,
         onPressed: () {
+          StaticVars.userId = int.parse(usernameController.text);
           if (usernameController.text == "1" &&
               passwordController.text == "123") {
             Navigator.push(
@@ -416,10 +418,7 @@ class _LoginPageState extends State<LoginPage> {
               passwordController.text == "123") {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                  builder: (context) => MyHomePage(
-                        title: "Barcode Scanner",
-                      )),
+              MaterialPageRoute(builder: (context) => SaveChecked()),
             );
           }
         },
@@ -829,6 +828,122 @@ class _ShowUserCheckedState extends State<ShowUserChecked> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class SaveChecked extends StatefulWidget {
+  @override
+  _SaveCheckedState createState() => _SaveCheckedState();
+}
+
+class _SaveCheckedState extends State<SaveChecked> {
+  String result = "";
+
+  Future _scanQR() async {
+    try {
+      var qrResult = await BarcodeScanner.scan();
+      setState(() {
+        result = qrResult.rawContent;
+      });
+    } on PlatformException catch (ex) {
+      if (ex.code == BarcodeScanner.cameraAccessDenied) {
+        setState(() {
+          result = "Camera Permission was denied";
+        });
+      } else {
+        setState(() {
+          result = "Unknown Error $ex";
+        });
+      }
+    } on FormatException {
+      setState(() {
+        result = "You pressed the back button before scanning anything!";
+      });
+    } catch (ex) {
+      setState(() {
+        result = "Unknown Error $ex";
+      });
+    }
+  }
+
+  void _saveBarcode() async {
+    var userId = StaticVars.userId;
+    // var ipLocal = "192.168.0.29";
+    var ipServer = "193.188.88.148";
+    var url =
+        "http://$ipServer/apps/myapps/barcodescan/apis/save_checked.php?locationBarcode=$result&userId=$userId";
+    var response = await http.get(url);
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      setState(() {
+        result = "You have checked in successfully.";
+      });
+    } else {
+      // If the server did not return a 200 OK response,
+      setState(() {
+        result = "Something wrong happened.";
+      });
+      // then throw an exception.
+      throw Exception('Failed to load album');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Stack(
+        children: [
+          Container(
+            height: double.infinity,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Color(0xFF73AEF5),
+                  Color(0xFF61A4F1),
+                  Color(0xFF478DE0),
+                  Color(0xFF398AE5),
+                ],
+                stops: [
+                  0.1,
+                  0.4,
+                  0.7,
+                  0.9,
+                ],
+              ),
+            ),
+          ),
+          Align(
+            alignment: Alignment.center,
+            child: Text(result),
+          ),
+        ],
+      ),
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          FloatingActionButton.extended(
+            onPressed: _saveBarcode,
+            label: Text("Submit"),
+            icon: Icon(Icons.radio_button_on_outlined),
+            heroTag: "submit",
+          ),
+          SizedBox(
+            width: 20,
+          ),
+          FloatingActionButton.extended(
+            onPressed: _scanQR,
+            label: Text("Scan"),
+            icon: Icon(Icons.camera_alt),
+            heroTag: "scan",
+          ),
+        ],
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }
