@@ -832,3 +832,15 @@ class _ShowUserCheckedState extends State<ShowUserChecked> {
     );
   }
 }
+
+class SaveChecked extends StatefulWidget {
+  @override
+  _SaveCheckedState createState() => _SaveCheckedState();
+}
+
+class _SaveCheckedState extends State<SaveChecked> {
+  @override
+  Widget build(BuildContext context) {
+    return Container();
+  }
+}
