@@ -552,14 +552,8 @@ class ShowUserChecked extends StatefulWidget {
 class _ShowUserCheckedState extends State<ShowUserChecked> {
   String selectedValue = "Choose a distributor";
   String selectedId = "0";
-  List<List> users = [
-    ["0", "distributor1"],
-    ["1", "Ahmad Ali"],
-    ["2", "Mohammad Ali"],
-    ["3", "Faris Hassan"],
-    ["1", "Ahmad Ali"],
-    ["2", "Mohammad Ali"],
-    ["3", "Faris Hassan"],
+  List<List> _distributors = [
+    ["0", "distributor"]
   ];
   List<Checked> _checked = [
     Checked(
@@ -567,6 +561,20 @@ class _ShowUserCheckedState extends State<ShowUserChecked> {
         locationName: "locationName",
         dateTime: "dateTime")
   ];
+  List<User> _user = [User(userId: 0, userName: "", userTypeId: "")];
+
+  _fillDistributorList() async {
+    var url = StaticVars.url + "get_all_distributor.php";
+    var response = await http.get(url);
+    if (response.statusCode == 200) {
+      List list = json.decode(response.body);
+      _user = [User(userId: 0, userName: "", userTypeId: "")];
+      list.forEach((map) {
+        _user.add(User.fromMap(map));
+      });
+      setState(() {});
+    }
+  }
 
   _fillCheckedList({@required userId}) async {
     userId = int.parse(userId);
