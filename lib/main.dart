@@ -8,6 +8,8 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 
+import 'model/user.dart';
+
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -325,6 +327,9 @@ class _LoginPageState extends State<LoginPage> {
       ),
     ],
   );
+  String _url = StaticVars.url;
+  String _result = "";
+  User _user = User(userId: 0, userName: "", userTypeId: 0);
 
   Widget buildUsernameTf() {
     return Column(
@@ -410,20 +415,9 @@ class _LoginPageState extends State<LoginPage> {
       child: RaisedButton(
         elevation: 5,
         onPressed: () {
-          StaticVars.userId = int.parse(usernameController.text);
-          if (usernameController.text == "1" &&
-              passwordController.text == "123") {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => ShowUserChecked()),
-            );
-          } else if (usernameController.text == "2" &&
-              passwordController.text == "123") {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => SaveChecked()),
-            );
-          }
+          login(
+              userId: usernameController.text,
+              userPassword: passwordController.text);
         },
         padding: EdgeInsets.all(15),
         shape: RoundedRectangleBorder(
@@ -441,6 +435,39 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
+  }
+
+  void login({@required String userId, @required String userPassword}) async {
+    var url = _url + "/login.php";
+    var response = await http
+        .post(url, body: {"userId": userId, "userPassword": userPassword});
+    if (response.statusCode == 200) {
+      if (response.body.isNotEmpty) {
+        StaticVars.userId = userId;
+        _user = User.fromMap(json.decode(response.body)[0]);
+        navigate(_user.userTypeId);
+      }
+    } else {
+      setState(() {
+        _result = "Something wrong happened.";
+      });
+      // then throw an exception.
+      throw Exception('Failed to load album');
+    }
+  }
+
+  void navigate(int userTypeId) {
+    if (userTypeId == 1) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ShowUserChecked()),
+      );
+    } else if (userTypeId == 2) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => SaveChecked()),
+      );
+    }
   }
 
   @override
@@ -499,6 +526,14 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   buildPasswordTf(),
                   buildLoginButton(),
+                  SizedBox(
+                    height: 30,
+                  ),
+                  Text(
+                    _result,
+                    style: TextStyle(
+                        color: Colors.red, fontWeight: FontWeight.bold),
+                  ),
                 ],
               ),
             ),
