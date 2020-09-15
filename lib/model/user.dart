@@ -10,8 +10,8 @@ class User {
     @required userName,
     @required userTypeId,
   })  : _userId = userId,
-        _userTypeId = userTypeId,
-        _userName = userName;
+        _userName = userName,
+        _userTypeId = userTypeId;
 
   int get userId => _userId;
 
