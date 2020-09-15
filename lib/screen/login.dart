@@ -5,7 +5,6 @@ import 'package:barcode_scan_flutter_app/screen/showChecked.dart';
 import 'package:barcode_scan_flutter_app/static/staticVars.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-
 import '../main.dart';
 
 class LoginPage extends StatefulWidget {
