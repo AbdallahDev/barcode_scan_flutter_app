@@ -1,4 +1,6 @@
 import 'package:barcode_scan/barcode_scan.dart';
+import 'package:barcode_scan_flutter_app/screen/login.dart';
+import 'package:barcode_scan_flutter_app/screen/scanProduct.dart';
 import 'package:barcode_scan_flutter_app/static/staticVars.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -62,9 +64,34 @@ class _SaveCheckedState extends State<SaveChecked> {
     }
   }
 
+  _buildAppBar() {
+    return AppBar(
+      backgroundColor: Color(0xFF73AEF5),
+      title: Text("Check In"),
+      centerTitle: true,
+      leading: GestureDetector(
+        child: Icon(Icons.qr_code_scanner),
+        onTap: () {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => ScanProduct()));
+        },
+      ),
+      actions: [
+        GestureDetector(
+          child: Icon(Icons.logout),
+          onTap: () {
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => LoginPage()));
+          },
+        )
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: _buildAppBar(),
       body: Stack(
         children: [
           Container(

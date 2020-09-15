@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:barcode_scan_flutter_app/model/checked.dart';
 import 'package:barcode_scan_flutter_app/model/user.dart';
+import 'package:barcode_scan_flutter_app/screen/login.dart';
 import 'package:barcode_scan_flutter_app/static/staticVars.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -183,9 +184,28 @@ class _ShowUserCheckedState extends State<ShowUserChecked> {
         });
   }
 
+  _buildAppBar() {
+    return AppBar(
+      title: Text("Checked In Distributors"),
+      centerTitle: true,
+      backgroundColor: Color(0xFF73AEF5),
+      leading: Text(""),
+      actions: [
+        GestureDetector(
+          child: Icon(Icons.logout),
+          onTap: () {
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => LoginPage()));
+          },
+        )
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: _buildAppBar(),
       body: Stack(
         children: [
           Container(
