@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:barcode_scan/barcode_scan.dart';
+import 'package:barcode_scan_flutter_app/model/product.dart';
 import 'package:barcode_scan_flutter_app/screen/login.dart';
 import 'package:barcode_scan_flutter_app/screen/saveChecked.dart';
+import 'package:barcode_scan_flutter_app/static/staticVars.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
@@ -29,6 +33,8 @@ class _ScanProductState extends State<ScanProduct> {
   List<String> barCodes = [
     "00000",
   ];
+  List<Product> _productList;
+  Product _selectedProduct;
   String result = "";
   final blackTextStyle = TextStyle(
     color: Colors.black,
@@ -45,6 +51,56 @@ class _ScanProductState extends State<ScanProduct> {
     fontWeight: FontWeight.bold,
     fontFamily: 'OpenSans',
   );
+
+  @override
+  void initState() {
+    super.initState();
+    _productList = [Product(productId: 0, productName: "Choose a product")];
+    _selectedProduct = _productList[0];
+    _fillProductList();
+  }
+
+  void _fillProductList() async {
+    var url = StaticVars.url + "get_all_products.php";
+    var response = await http.get(url);
+    if (response.statusCode == 200) {
+      List list = json.decode(response.body);
+      list.forEach((map) {
+        _productList.add(Product.fromMap(map));
+      });
+      setState(() {});
+    }
+  }
+
+  Widget _buildProductDropDownButton() {
+    return DropdownButton<Product>(
+        underline: Container(
+          height: 3,
+          color: Colors.white,
+        ),
+        dropdownColor: Color(0xFF73AEF5),
+        icon: Icon(
+          Icons.arrow_drop_down_circle,
+          color: Colors.white,
+        ),
+        items: _productList.map((Product product) {
+          return DropdownMenuItem(
+            child: Container(
+              padding: EdgeInsets.all(10),
+              child: Text(
+                product.productName,
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+            value: product,
+          );
+        }).toList(),
+        value: _selectedProduct,
+        onChanged: (value) {
+          _selectedProduct = value;
+          setState(() {});
+        });
+  }
 
   Widget buildListView() {
     return ListView.builder(
@@ -102,18 +158,11 @@ class _ScanProductState extends State<ScanProduct> {
     );
   }
 
-  void _callSaveBarCodesFunction() {
-    for (var i = 0; i < barCodes.length; i++) {
-      _saveToken(barCodes[i], productName);
-    }
-  }
-
   Future _scanQR() async {
     try {
       var qrResult = await BarcodeScanner.scan();
       setState(() {
         result = qrResult.rawContent;
-        productName = selectedValue;
         barCodes.add(qrResult.rawContent);
       });
     } on PlatformException catch (ex) {
@@ -137,22 +186,24 @@ class _ScanProductState extends State<ScanProduct> {
     }
   }
 
-  void _saveToken(String barCode, String productName) async {
-    // var ipLocal = "192.168.0.29";
-    var ipServer = "193.188.88.148";
-    var url =
-        "http://$ipServer/apps/test/BarcodeScan/apis/events_insert.php?barcode=$barCode&productName=$productName";
+  void _callSaveBarCodesFunction() {
+    for (var i = 0; i < _productList.length; i++) {
+      _saveBarcode(barCodes[i], _selectedProduct.productId);
+    }
+  }
+
+  void _saveBarcode(String barCode, int productId) async {
+    var url = StaticVars.url +
+        "events_insert.php?barcode=$barCode&productId=$productId";
     var response = await http.get(url);
     if (response.statusCode == 200) {
-      // If the server did return a 200 OK response,
-      // then parse the JSON.
       setState(() {
-        result = "good";
+        result = "Product has been saved successfully";
       });
     } else {
       // If the server did not return a 200 OK response,
       setState(() {
-        result = "error";
+        result = "Something wrong happened";
       });
       // then throw an exception.
       throw Exception('Failed to load album');
@@ -224,42 +275,7 @@ class _ScanProductState extends State<ScanProduct> {
               child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    DropdownButton<String>(
-                      underline: Container(
-                        height: 3,
-                        color: Colors.white,
-                      ),
-                      dropdownColor: Color(0xFF73AEF5),
-                      value: selectedValue,
-                      icon: Icon(
-                        Icons.arrow_drop_down_circle,
-                        color: Colors.white,
-                      ),
-                      items: <String>[
-                        "Choose a product",
-                        'Cell phones',
-                        'Laptops',
-                        'Smart watches'
-                      ].map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Container(
-                            padding: EdgeInsets.all(10),
-                            child: Text(
-                              value,
-                              style: whiteTextStyle,
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                      onChanged: (value) {
-                        setState(() {
-                          selectedValue = value;
-                        });
-                      },
-                    ),
-                  ],
+                  children: [_buildProductDropDownButton()],
                 ),
               ),
             ),
