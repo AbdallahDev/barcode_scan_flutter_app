@@ -30,12 +30,12 @@ class ScanProduct extends StatefulWidget {
 class _ScanProductState extends State<ScanProduct> {
   String productName = "";
   String selectedValue = "Choose a product";
-  List<String> barCodes = [
+  List<String> _barcodeList = [
     "00000",
   ];
   List<Product> _productList;
   Product _selectedProduct;
-  String result = "";
+  String _result = "";
   final blackTextStyle = TextStyle(
     color: Colors.black,
     fontWeight: FontWeight.bold,
@@ -107,14 +107,14 @@ class _ScanProductState extends State<ScanProduct> {
         physics: NeverScrollableScrollPhysics(),
         shrinkWrap: true,
         padding: EdgeInsets.only(left: 11, right: 11),
-        itemCount: barCodes.length,
+        itemCount: _barcodeList.length,
         itemBuilder: (context, position) {
-          if (barCodes[position] != "00000") {
+          if (_barcodeList[position] != "00000") {
             return Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  barCodes[position],
+                  _barcodeList[position],
                   style: TextStyle(
                       fontSize: 17,
                       color: Colors.white,
@@ -138,7 +138,7 @@ class _ScanProductState extends State<ScanProduct> {
             child: RaisedButton(
               elevation: 5,
               onPressed: () {
-                barCodes.removeAt(position);
+                _barcodeList.removeAt(position);
                 setState(() {});
               },
               child: Text(
@@ -162,48 +162,57 @@ class _ScanProductState extends State<ScanProduct> {
     try {
       var qrResult = await BarcodeScanner.scan();
       setState(() {
-        result = qrResult.rawContent;
-        barCodes.add(qrResult.rawContent);
+        _result = "";
+        _barcodeList.add(qrResult.rawContent);
+      });
+      _barcodeList.forEach((element) {
+        print(element);
       });
     } on PlatformException catch (ex) {
       if (ex.code == BarcodeScanner.cameraAccessDenied) {
         setState(() {
-          result = "Camera Permission was denied";
+          _result = "Camera Permission was denied";
         });
       } else {
         setState(() {
-          result = "Unknown Error $ex";
+          _result = "Unknown Error $ex";
         });
       }
     } on FormatException {
       setState(() {
-        result = "You pressed the back button before scanning anything!";
+        _result = "You pressed the back button before scanning anything!";
       });
     } catch (ex) {
       setState(() {
-        result = "Unknown Error $ex";
+        _result = "Unknown Error $ex";
       });
     }
   }
 
   void _callSaveBarCodesFunction() {
-    for (var i = 0; i < _productList.length; i++) {
-      _saveBarcode(barCodes[i], _selectedProduct.productId);
+    for (var i = 1; i < _barcodeList.length; i++) {
+      _saveBarcode(_barcodeList[i], _selectedProduct.productId);
     }
+    setState(() {
+      _barcodeList = [
+        "00000",
+      ];
+      buildListView();
+    });
   }
 
   void _saveBarcode(String barCode, int productId) async {
     var url = StaticVars.url +
-        "events_insert.php?barcode=$barCode&productId=$productId";
+        "save_barcode.php?barcode=$barCode&productId=$productId";
     var response = await http.get(url);
     if (response.statusCode == 200) {
       setState(() {
-        result = "Product has been saved successfully";
+        _result = "Product has been saved successfully";
       });
     } else {
       // If the server did not return a 200 OK response,
       setState(() {
-        result = "Something wrong happened";
+        _result = "Something wrong happened";
       });
       // then throw an exception.
       throw Exception('Failed to load album');
@@ -281,7 +290,7 @@ class _ScanProductState extends State<ScanProduct> {
             ),
           ),
           Align(
-            alignment: Alignment.bottomCenter,
+            alignment: Alignment.center,
             child: Container(
               padding: EdgeInsets.only(top: 210, bottom: 90),
               child: SingleChildScrollView(
@@ -295,6 +304,10 @@ class _ScanProductState extends State<ScanProduct> {
               ),
             ),
           ),
+          Align(
+            alignment: Alignment.center,
+            child: Text(_result,style: whiteTextStyle,),
+          )
         ],
       ),
       floatingActionButton: Row(
