@@ -13,12 +13,14 @@ class SaveChecked extends StatefulWidget {
 
 class _SaveCheckedState extends State<SaveChecked> {
   String result = "";
+  String _barcode = "";
 
   Future _scanQR() async {
     try {
       var qrResult = await BarcodeScanner.scan();
       setState(() {
         result = qrResult.rawContent;
+        _barcode = qrResult.rawContent;
       });
     } on PlatformException catch (ex) {
       if (ex.code == BarcodeScanner.cameraAccessDenied) {
@@ -42,15 +44,14 @@ class _SaveCheckedState extends State<SaveChecked> {
   }
 
   void _saveBarcode() async {
-    var userId = StaticVars.userId;
-    // var ipLocal = "192.168.0.29";
-    var ipServer = "193.188.88.148";
-    var url =
-        "http://$ipServer/apps/myapps/barcodescan/apis/save_checked.php?locationBarcode=$result&userId=$userId";
+    var url = StaticVars.url +
+        "save_checked.php?locationBarcode=" +
+        _barcode +
+        "&userId=" +
+        StaticVars.userId;
+    print(url);
     var response = await http.get(url);
     if (response.statusCode == 200) {
-      // If the server did return a 200 OK response,
-      // then parse the JSON.
       setState(() {
         result = "You have checked in successfully.";
       });
