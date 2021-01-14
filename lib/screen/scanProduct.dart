@@ -280,7 +280,7 @@ class _ScanProductState extends State<ScanProduct> {
           Align(
             alignment: Alignment.topCenter,
             child: Container(
-              padding: EdgeInsets.only(bottom: 500),
+              padding: EdgeInsets.only(bottom: 450),
               child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -288,6 +288,10 @@ class _ScanProductState extends State<ScanProduct> {
                 ),
               ),
             ),
+          ),
+          Align(
+            alignment: Alignment(0,-0.5),
+            child: Text("Total: 0",style: whiteTextStyle,),
           ),
           Align(
             alignment: Alignment.center,
