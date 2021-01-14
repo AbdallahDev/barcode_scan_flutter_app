@@ -36,6 +36,7 @@ class _ScanProductState extends State<ScanProduct> {
   List<Product> _productList;
   Product _selectedProduct;
   String _result = "";
+  double _total = 0.0;
   final blackTextStyle = TextStyle(
     color: Colors.black,
     fontWeight: FontWeight.bold,
@@ -163,6 +164,7 @@ class _ScanProductState extends State<ScanProduct> {
       var qrResult = await BarcodeScanner.scan();
       setState(() {
         _result = "";
+        _total += 1;
         _barcodeList.add(qrResult.rawContent);
       });
       _barcodeList.forEach((element) {
@@ -290,8 +292,11 @@ class _ScanProductState extends State<ScanProduct> {
             ),
           ),
           Align(
-            alignment: Alignment(0,-0.5),
-            child: Text("Total: 0",style: whiteTextStyle,),
+            alignment: Alignment(0, -0.5),
+            child: Text(
+              "Total: $_total JOD",
+              style: whiteTextStyle,
+            ),
           ),
           Align(
             alignment: Alignment.center,
@@ -310,7 +315,10 @@ class _ScanProductState extends State<ScanProduct> {
           ),
           Align(
             alignment: Alignment.center,
-            child: Text(_result,style: whiteTextStyle,),
+            child: Text(
+              _result,
+              style: whiteTextStyle,
+            ),
           )
         ],
       ),
