@@ -35,7 +35,11 @@ class _ScanProductState extends State<ScanProduct> {
   ];
   List<Product> _productList;
   Product _selectedProduct;
+  Product _product =
+      Product(productId: 0, productName: "", productPrice: "0.0");
   String _result = "";
+  double _price = 0.0;
+  double _total = 0.0;
   final blackTextStyle = TextStyle(
     color: Colors.black,
     fontWeight: FontWeight.bold,
@@ -55,7 +59,10 @@ class _ScanProductState extends State<ScanProduct> {
   @override
   void initState() {
     super.initState();
-    _productList = [Product(productId: 0, productName: "Choose a product")];
+    _productList = [
+      Product(
+          productId: 0, productName: "Choose a product", productPrice: "0.0")
+    ];
     _selectedProduct = _productList[0];
     _fillProductList();
   }
@@ -98,6 +105,7 @@ class _ScanProductState extends State<ScanProduct> {
         value: _selectedProduct,
         onChanged: (value) {
           _selectedProduct = value;
+          _getProductPrice(_selectedProduct.productId);
           setState(() {});
         });
   }
@@ -163,6 +171,7 @@ class _ScanProductState extends State<ScanProduct> {
       var qrResult = await BarcodeScanner.scan();
       setState(() {
         _result = "";
+        _total += _price;
         _barcodeList.add(qrResult.rawContent);
       });
       _barcodeList.forEach((element) {
@@ -208,6 +217,25 @@ class _ScanProductState extends State<ScanProduct> {
     if (response.statusCode == 200) {
       setState(() {
         _result = "Product has been saved successfully";
+      });
+    } else {
+      // If the server did not return a 200 OK response,
+      setState(() {
+        _result = "Something wrong happened";
+      });
+      // then throw an exception.
+      throw Exception('Failed to load album');
+    }
+  }
+
+  //this function will get the product price
+  void _getProductPrice(int productId) async {
+    var url = StaticVars.url + "get_product_price.php?productId=$productId";
+    var response = await http.get(url);
+    if (response.statusCode == 200) {
+      setState(() {
+        _product = Product.fromMap(json.decode(response.body)[0]);
+        _price = double.parse(_product.productPrice);
       });
     } else {
       // If the server did not return a 200 OK response,
@@ -280,13 +308,20 @@ class _ScanProductState extends State<ScanProduct> {
           Align(
             alignment: Alignment.topCenter,
             child: Container(
-              padding: EdgeInsets.only(bottom: 500),
+              padding: EdgeInsets.only(bottom: 450),
               child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [_buildProductDropDownButton()],
                 ),
               ),
+            ),
+          ),
+          Align(
+            alignment: Alignment(0, -0.5),
+            child: Text(
+              "Total: $_total JOD",
+              style: whiteTextStyle,
             ),
           ),
           Align(
@@ -306,7 +341,10 @@ class _ScanProductState extends State<ScanProduct> {
           ),
           Align(
             alignment: Alignment.center,
-            child: Text(_result,style: whiteTextStyle,),
+            child: Text(
+              _result,
+              style: whiteTextStyle,
+            ),
           )
         ],
       ),
