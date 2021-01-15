@@ -8,6 +8,9 @@ import 'package:barcode_scan_flutter_app/static/staticVars.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
 
 class ScanProduct extends StatefulWidget {
   ScanProduct({Key key, this.title}) : super(key: key);
@@ -198,6 +201,27 @@ class _ScanProductState extends State<ScanProduct> {
     }
   }
 
+  Future _print() async {
+    final doc = pw.Document();
+
+    doc.addPage(pw.Page(
+        pageFormat: PdfPageFormat.a4,
+        build: (pw.Context context) {
+          return pw.Column(
+            children: [
+              pw.Row(children: [
+                pw.Text("Product: "),
+                pw.Text(_selectedProduct.productName)
+              ]),
+              pw.Row(
+                  children: [pw.Text("Total: "), pw.Text(_total.toString())]),
+            ],
+          ); // Center
+        }));
+    await Printing.layoutPdf(
+        onLayout: (PdfPageFormat format) async => doc.save());
+  }
+
   void _callSaveBarCodesFunction() {
     for (var i = 1; i < _barcodeList.length; i++) {
       _saveBarcode(_barcodeList[i], _selectedProduct.productId);
@@ -351,20 +375,52 @@ class _ScanProductState extends State<ScanProduct> {
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          FloatingActionButton.extended(
-            onPressed: _callSaveBarCodesFunction,
-            label: Text("Submit"),
-            icon: Icon(Icons.radio_button_on_outlined),
-            heroTag: "submit",
+          Container(
+            width: 90,
+            child: FloatingActionButton.extended(
+              onPressed: _callSaveBarCodesFunction,
+              label: Text(
+                "Submit",
+                style: TextStyle(fontSize: 10),
+              ),
+              icon: Icon(
+                Icons.radio_button_on_outlined,
+                size: 15,
+              ),
+              heroTag: "submit",
+            ),
           ),
-          SizedBox(
-            width: 20,
+          SizedBox(width: 5),
+          Container(
+            width: 90,
+            child: FloatingActionButton.extended(
+              onPressed: _scanQR,
+              label: Text(
+                "Scan",
+                style: TextStyle(fontSize: 10),
+              ),
+              icon: Icon(
+                Icons.camera_alt,
+                size: 15,
+              ),
+              heroTag: "scan",
+            ),
           ),
-          FloatingActionButton.extended(
-            onPressed: _scanQR,
-            label: Text("Scan"),
-            icon: Icon(Icons.camera_alt),
-            heroTag: "scan",
+          SizedBox(width: 5),
+          Container(
+            width: 90,
+            child: FloatingActionButton.extended(
+              onPressed: _print,
+              label: Text(
+                "Print",
+                style: TextStyle(fontSize: 10),
+              ),
+              icon: Icon(
+                Icons.print,
+                size: 15,
+              ),
+              heroTag: "print",
+            ),
           ),
         ],
       ),
